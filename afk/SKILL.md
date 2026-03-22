@@ -74,8 +74,19 @@ The `PostToolUse` hook at `~/.claude/skills/afk/scripts/afk_hook.sh` runs after 
 
 The hook runs the Slack send in the background so it does not block Claude.
 
+## Setup (new machine / first install)
+
+The hook must be registered in `~/.claude/settings.json` for AFK mode to work. Run once after copying or cloning the skills folder:
+
+```bash
+bash ~/.claude/skills/afk/setup.sh
+```
+
+Then restart Claude Code. The script is idempotent — safe to run again if unsure.
+
 ## Requirements
 
 - Must be in a tmux session (`$TMUX_PANE` must be set)
 - `SLACK_BOT_TOKEN` and `SLACK_CHANNEL` environment variables must be set
 - Slack skill scripts must be at `~/.claude/skills/slack/scripts/`
+- Hook registered via `setup.sh` (see above)
