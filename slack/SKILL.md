@@ -65,6 +65,7 @@ State files:
 - Poll job runs every 5 minutes for 12 hours, then auto-expires
 - When user responds on Slack, message is injected into tmux with prefix: `[Slack message, take this as a regular prompt and reply back in slack]`
 - You should process the injected message and reply via another `slack_ping.sh` call
+- **IMPORTANT:** When replying to Slack messages, use `slack_ping.sh` **without** `--afk`. The `--afk` flag routes to the AFK thread (1-way), not the 2-way conversation thread.
 
 ### AFK Mode: 1-Way Messaging
 
