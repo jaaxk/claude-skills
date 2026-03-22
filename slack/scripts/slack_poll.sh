@@ -169,10 +169,15 @@ log_error "Latest TS among new messages: $LATEST_TS"
 echo "$LATEST_TS" > "$LAST_MESSAGE_TS_FILE"
 log_error "Updated last_message_ts.txt to $LATEST_TS"
 
-# Prepare message for injection with prefix
-INJECTED_MESSAGE="[Slack message, take this as a regular prompt and reply back in slack]
+# Prepare message for injection
+# For single-key messages (1, 2, 3), send the key directly without the header
+if [[ "$NEW_MESSAGES" =~ ^[123]$ ]]; then
+    INJECTED_MESSAGE="$NEW_MESSAGES"
+else
+    INJECTED_MESSAGE="[Slack message, take this as a regular prompt and reply back in slack]
 
 $NEW_MESSAGES"
+fi
 
 # Inject into tmux session
 log_error "Injecting into tmux pane '$TMUX_PANE' via: $TMUX_CMD send-keys -t '$TMUX_PANE' ..."
