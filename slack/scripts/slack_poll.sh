@@ -55,9 +55,10 @@ THREAD_TS=$(cat "$THREAD_FILE")
 log_error "Thread TS: $THREAD_TS"
 
 # Build tmux command with socket if available
-TMUX_CMD="/usr/local/bin/tmux"
+TMUX_BIN="$(which tmux)"
+TMUX_CMD="$TMUX_BIN"
 if [[ -n "$TMUX_SOCKET" ]]; then
-    TMUX_CMD="/usr/local/bin/tmux -S $TMUX_SOCKET"
+    TMUX_CMD="$TMUX_BIN -S $TMUX_SOCKET"
     log_error "Using tmux socket: $TMUX_SOCKET"
 else
     log_error "No TMUX_SOCKET set — using plain 'tmux'"
