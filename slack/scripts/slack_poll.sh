@@ -55,13 +55,23 @@ THREAD_TS=$(cat "$THREAD_FILE")
 log_error "Thread TS: $THREAD_TS"
 
 # Build tmux command with socket if available
-TMUX_BIN="$(which tmux)"
+TMUX_BIN="$(which tmux 2>/dev/null)"
+# Fallback to known paths if which fails (common in cron, PATH is minimal)
+if [[ -z "$TMUX_BIN" ]]; then
+    for candidate in /usr/local/bin/tmux /opt/homebrew/bin/tmux /usr/bin/tmux; do
+        if [[ -x "$candidate" ]]; then
+            TMUX_BIN="$candidate"
+            break
+        fi
+    done
+fi
+if [[ -z "$TMUX_BIN" ]]; then
+    log_error "ERROR: tmux not found in PATH or known locations — exiting"
+    exit 1
+fi
 TMUX_CMD="$TMUX_BIN"
 if [[ -n "$TMUX_SOCKET" ]]; then
     TMUX_CMD="$TMUX_BIN -S $TMUX_SOCKET"
-    log_error "Using tmux socket: $TMUX_SOCKET"
-else
-    log_error "No TMUX_SOCKET set — using plain 'tmux'"
 fi
 
 # Check if tmux pane is still alive — if not, clean up temp dir and exit
@@ -71,7 +81,6 @@ if ! $TMUX_CMD list-panes -t "$TMUX_PANE" &>/dev/null; then
     log_error "Temp dir removed"
     exit 0
 fi
-log_error "tmux pane '$TMUX_PANE' is accessible"
 
 # Check if last_message_ts.txt exists, initialize if not
 LAST_MESSAGE_TS_FILE="$TEMP_DIR/last_message_ts.txt"
