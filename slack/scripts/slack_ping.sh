@@ -72,6 +72,14 @@ if [[ "$AFK_MODE" == true ]] && [[ -z "$THREAD_TS" ]]; then
     MESSAGE="initializing AFK thread..."
 fi
 
+# Prefix message with timestamp (and hostname for first messages in a thread)
+TIMESTAMP=$(date '+%H:%M:%S')
+if [[ -z "$THREAD_TS" ]]; then
+    MESSAGE="[$TIMESTAMP] [$(hostname -s)] $MESSAGE"
+elif [[ "$AFK_MODE" == true ]]; then
+    MESSAGE="[$TIMESTAMP] $MESSAGE"
+fi
+
 # Build the JSON payload
 if [[ -n "$THREAD_TS" ]]; then
     # Reply in thread
